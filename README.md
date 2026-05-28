@@ -1,95 +1,68 @@
 # ⚔️ DemiseMaces
 
-A modern, high-performance Java Minecraft Paper Plugin built for **Paper 1.21+** using **Java 21** and **Gradle (Kotlin DSL)**. 
-
-This repository is pre-configured with everything you need to develop, compile, and test your Paper plugin efficiently.
+**DemiseMaces** is a modern Minecraft Paper plugin (1.21+) that introduces four powerful, custom-coded Maces into your server. Each mace possesses unique, devastating abilities to dominate the battlefield!
 
 ---
 
-## ✨ Features Pre-Configured
+## ✨ Features
 
-* **Modern Gradle (Kotlin DSL)**: Fast builds, type-safe configuration, and modern dependency management.
-* **Paperweight Run-Paper Plugin**: Launch a local Paper server with your plugin pre-loaded in a single command.
-* **Java 21 Toolchain**: Fully configured to take advantage of Java 21's performance and language features.
-* **Starter Mace Mechanic**: Includes an epic lightning thunder effect and messages when striking a mob/player with a Mace.
-* **GNU GPL v3 License**: Ready-to-go Open Source licensing.
-* **Pre-configured `.gitignore`**: Keeps your repository clean from build files, IDE settings, and test server folders.
+Unleash the true power of the Mace with four legendary variants:
 
----
+### 💨 Wind Mace
+*A legendary mace forged from the howling winds.*
+* **Right Click:** **Dash Forward** - Propel yourself forward at high speed.
+* **Press F (Swap Hand):** **Launch Upwards** - Launch yourself vertically into the air.
 
-## 🛠️ Prerequisites
+### 🌌 Void Mace
+*A dark relic that manipulates gravity itself.*
+* **Right Click:** **Push Entities** - Violently repel all nearby enemies away from you.
+* **Press F (Swap Hand):** **Pull Entities** - Drag all nearby enemies towards your location.
 
-To build and run this plugin, you will need:
-* **Java 21** or higher (LTS)
-* An IDE (e.g., **IntelliJ IDEA** or **VS Code** with Java extensions)
+### ❄️ Frost Mace
+*An ancient weapon that freezes the very air.*
+* **Right Click:** **Absolute Freeze** - Instantly freeze all surrounding entities in place for 15 seconds.
+* **Press F (Swap Hand):** **Frost Projectile** - Hurl your mace as a deadly projectile that shatters on impact, dealing massive damage.
 
-*Note: You do not need to install Gradle manually. The project includes the Gradle Wrapper (`gradlew`).*
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/DemiseMaces.git
-cd DemiseMaces
-```
-
-### 2. Build the plugin
-Compile the code and pack it into a `.jar` file:
-```bash
-./gradlew build
-```
-The compiled jar file will be generated in `build/libs/DemiseMaces-1.0.0-SNAPSHOT.jar`.
-
-### 3. Run a Local Test Server
-The repository is equipped with the `run-paper` plugin which automates server setup. Simply run:
-```bash
-./gradlew runServer
-```
-This command will:
-1. Automatically download the correct Paper 1.21 server jar.
-2. Set up a local test environment in the `run/` directory (ignored by Git).
-3. Automatically load the compiled **DemiseMaces** plugin.
-4. Open the Minecraft server console in your terminal!
+### 💥 Detonate Mace
+*A highly volatile weapon that loves destruction.*
+* **Passive:** **Explosive Strikes** - Every hit generates a localized explosion that deals bonus damage.
+* **Press F (Swap Hand):** **Cataclysmic Burst** - Trigger a massive AoE explosion that obliterates terrain and sends enemies flying.
 
 ---
 
-## 📁 Repository Structure
+## 🛠️ Configuration & Customization
 
-```text
-DemiseMaces/
-├── .gitignore                      # Git ignore file (builds, local server run)
-├── LICENSE                         # GNU GPL v3.0 License
-├── README.md                       # Repository documentation
-├── build.gradle.kts                # Main Gradle build configuration
-├── settings.gradle.kts             # Gradle project name definition
-├── gradlew                         # Unix Gradle Wrapper shell script
-├── gradlew.bat                     # Windows Gradle Wrapper script
-├── gradle/                         # Gradle Wrapper files folder
-└── src/
-    └── main/
-        ├── java/
-        │   └── com/github/jiten/
-        │       └── demisemaces/
-        │           └── DemiseMaces.java   # Main plugin class
-        └── resources/
-            └── paper-plugin.yml    # Paper plugin metadata configuration
-```
+DemiseMaces is fully customizable! Upon running the plugin for the first time, a `config.yml` will be generated in `plugins/DemiseMaces/`. 
+
+You can use this file to modify:
+* **Cooldowns** for every ability.
+* **Velocity Multipliers** (How far dashes and pushes launch entities).
+* **Radii** (The Area-of-Effect range for abilities).
+* **Damage** (Base damage for projectiles and passives).
+* **Freeze Duration** for the Frost Mace.
+
+Once you have made your changes in `config.yml`, simply run `/demisemaces reload` in-game to apply them instantly—no server restart required!
 
 ---
 
-## 💻 Technical Details
+## 📜 Commands & Permissions
 
-### Plugin Lifecycle
-* **`onEnable()`**: Triggered when the server loads the plugin. Registers events and logs initialization messages.
-* **`onDisable()`**: Triggered when the server shuts down or reloads. Safely disposes of resources.
+* `/demisemaces give <mace_type>` - Grants the specified legendary mace to the user.
+* `/demisemaces reload` - Reloads the `config.yml` file from disk.
 
-### Custom Mechanics Included
-* **`onMaceHit(EntityDamageByEntityEvent)`**: Listens to damage events. If a player holding a `MACE` hits an entity, it plays a dramatic lightning storm thunder sound (`Sound.ENTITY_LIGHTNING_BOLT_THUNDER`) and announces a demise blow to the player.
+**Permission Node:** `demisemaces.admin` (Defaults to Server Operators).
+
+---
+
+## 🚀 Installation
+
+1. Download the compiled `DemiseMaces-1.0.0-SNAPSHOT.jar` file.
+2. Drop it into your Minecraft Server's `plugins/` directory.
+3. Start or restart your server.
+4. Enjoy dealing demise with Maces!
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. See the [LICENSE](LICENSE) file for more information.
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
