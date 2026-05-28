@@ -22,8 +22,7 @@ public final class DemiseMaces extends JavaPlugin {
 
         // Register commands
         DemiseCommand command = new DemiseCommand(itemManager);
-        getCommand("demisemaces").setExecutor(command);
-        getCommand("demisemaces").setTabCompleter(command);
+        getServer().getCommandMap().register("demisemaces", command);
 
         printBanner();
         getLogger().info("DemiseMaces has been enabled!");

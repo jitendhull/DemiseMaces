@@ -3,9 +3,7 @@ package com.github.jiten.demisemaces.command;
 import com.github.jiten.demisemaces.mace.ItemManager;
 import com.github.jiten.demisemaces.mace.MaceType;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import net.kyori.adventure.text.Component;
@@ -15,16 +13,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DemiseCommand implements CommandExecutor, TabCompleter {
+public class DemiseCommand extends Command {
 
     private final ItemManager itemManager;
 
     public DemiseCommand(ItemManager itemManager) {
+        super("demisemaces");
+        this.description = "Main command for DemiseMaces.";
+        this.usageMessage = "/demisemaces give <type>";
+        this.setPermission("demisemaces.admin");
         this.itemManager = itemManager;
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("Only players can use this command.").color(NamedTextColor.RED));
             return true;
@@ -57,7 +59,7 @@ public class DemiseCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
             completions.add("give");
