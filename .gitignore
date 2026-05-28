@@ -13,6 +13,9 @@ target/
 .classpath
 .settings/
 
+# VS Code
+.vscode/
+
 # Local Paperweight / Run-Paper server directory
 run/
 
@@ -22,3 +25,7 @@ Thumbs.db
 
 # Log files
 *.log
+log/
+
+# Generated
+run/
