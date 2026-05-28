@@ -6,7 +6,6 @@ import com.github.jiten.demisemaces.mace.MaceType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -30,13 +29,11 @@ import java.util.Collection;
 
 public class MaceListener implements Listener {
 
-    private final JavaPlugin plugin;
     private final ItemManager itemManager;
     private final CooldownManager cooldownManager;
     private final NamespacedKey snowballKey;
 
     public MaceListener(JavaPlugin plugin, ItemManager itemManager, CooldownManager cooldownManager) {
-        this.plugin = plugin;
         this.itemManager = itemManager;
         this.cooldownManager = cooldownManager;
         this.snowballKey = new NamespacedKey(plugin, "frost_mace_throw");
@@ -76,7 +73,6 @@ public class MaceListener implements Listener {
     @EventHandler
     public void onPlayerSwapHand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
-        ItemStack item = event.getMainHandItem(); // Item that was in main hand and is going to offhand
         
         // Wait, if they have the mace in main hand and press F, the mace goes to offhand.
         // We probably want to cancel the event so it stays in the main hand, but trigger the ability.
