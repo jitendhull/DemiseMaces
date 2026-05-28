@@ -1,0 +1,24 @@
+# Gradle and Java build outputs
+.gradle/
+build/
+out/
+target/
+
+# IDE directories and files
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Local Paperweight / Run-Paper server directory
+run/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log

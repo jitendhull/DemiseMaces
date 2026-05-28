@@ -1,0 +1,6 @@
+name: DemiseMaces
+version: '${version}'
+main: com.github.jiten.demisemaces.DemiseMaces
+api-version: '1.21'
+author: jiten
+description: A modern Paper plugin for custom Mace mechanics.
