@@ -1,20 +1,31 @@
 package com.github.jiten.demisemaces;
 
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import com.github.jiten.demisemaces.command.DemiseCommand;
+import com.github.jiten.demisemaces.listener.MaceListener;
+import com.github.jiten.demisemaces.mace.CooldownManager;
+import com.github.jiten.demisemaces.mace.ItemManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class DemiseMaces extends JavaPlugin implements Listener {
+public final class DemiseMaces extends JavaPlugin {
+
+    private ItemManager itemManager;
+    private CooldownManager cooldownManager;
 
     @Override
     public void onEnable() {
-        // Register event listener
-        getServer().getPluginManager().registerEvents(this, this);
+        // Initialize managers
+        itemManager = new ItemManager(this);
+        cooldownManager = new CooldownManager();
 
+        // Register event listener
+        getServer().getPluginManager().registerEvents(new MaceListener(this, itemManager, cooldownManager), this);
+
+        // Register commands
+        DemiseCommand command = new DemiseCommand(itemManager);
+        getCommand("demisemaces").setExecutor(command);
+        getCommand("demisemaces").setTabCompleter(command);
+
+        printBanner();
         getLogger().info("DemiseMaces has been enabled!");
         getLogger().info("Ready to deal some demise with Maces!");
     }
@@ -24,19 +35,18 @@ public final class DemiseMaces extends JavaPlugin implements Listener {
         getLogger().info("DemiseMaces has been disabled.");
     }
 
-    @EventHandler
-    public void onMaceHit(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player player)) {
-            return;
-        }
+    private void printBanner() {
+        String[] banner = {
+            "  _____                 _          __  __                     ",
+            " |  __ \\               (_)        |  \\/  |                    ",
+            " | |  | | ___ _ __ ___  _ ___  ___| \\  / | __ _  ___ ___  ___ ",
+            " | |  | |/ _ \\ '_ ` _ \\| / __|/ _ \\ |\\/| |/ _` |/ __/ _ \\/ __|",
+            " | |__| |  __/ | | | | | \\__ \\  __/ |  | | (_| | (_|  __/\\__ \\",
+            " |_____/ \\___|_| |_| |_|_|___/\\___|_|  |_|\\__,_|\\___\\___||___/"
+        };
 
-        // Check if the player is holding a Mace in their main hand
-        if (player.getInventory().getItemInMainHand().getType() != Material.MACE) {
-            return;
+        for (String line : banner) {
+            getLogger().info(line);
         }
-
-        // Play an epic lightning strike sound to represent the demise power
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.5f);
-        player.sendMessage("§c§lDEMISE! §7You struck with the mighty Mace!");
     }
 }
