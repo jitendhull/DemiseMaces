@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.jiten.demisemaces"
-version = "1.0.0-SNAPSHOT"
+version = "1.1.0-Alpha"
 
 repositories {
     mavenCentral()
