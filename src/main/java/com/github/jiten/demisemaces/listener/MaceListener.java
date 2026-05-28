@@ -115,7 +115,7 @@ public class MaceListener implements Listener {
             loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.5f);
             
             // Add some extra damage or just the effect
-            event.setDamage(event.getDamage() + 2.0);
+            event.setDamage(event.getDamage() + 5.0);
         }
     }
 
@@ -124,7 +124,7 @@ public class MaceListener implements Listener {
         if (event.getEntity() instanceof Snowball snowball) {
             if (snowball.getPersistentDataContainer().has(snowballKey, PersistentDataType.BYTE)) {
                 if (event.getHitEntity() instanceof LivingEntity target) {
-                    target.damage(10.0, snowball.getShooter() instanceof Entity ? (Entity) snowball.getShooter() : null);
+                    target.damage(20.0, snowball.getShooter() instanceof Entity ? (Entity) snowball.getShooter() : null);
                     target.getWorld().playSound(target.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.0f, 0.5f);
                     target.getWorld().spawnParticle(Particle.SNOWFLAKE, target.getLocation(), 20, 0.5, 0.5, 0.5, 0.1);
                 }
@@ -135,30 +135,30 @@ public class MaceListener implements Listener {
     // --- Abilities Implementation ---
 
     private void handleWindDash(Player player) {
-        if (checkCooldown(player, "wind_dash", 40)) return;
+        if (checkCooldown(player, "wind_dash", 20)) return;
         
-        Vector direction = player.getLocation().getDirection().normalize().multiply(1.5);
+        Vector direction = player.getLocation().getDirection().normalize().multiply(2.5);
         player.setVelocity(direction);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 1.5f);
         player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 20, 0.5, 0.5, 0.5, 0.1);
     }
 
     private void handleWindLaunch(Player player) {
-        if (checkCooldown(player, "wind_launch", 45)) return;
+        if (checkCooldown(player, "wind_launch", 20)) return;
 
-        player.setVelocity(new Vector(0, 1.5, 0));
+        player.setVelocity(new Vector(0, 2.5, 0));
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WIND_CHARGE_WIND_BURST, 1.0f, 1.0f);
         player.getWorld().spawnParticle(Particle.GUST, player.getLocation(), 5, 0.5, 0.5, 0.5, 0.0);
     }
 
     private void handleVoidPush(Player player) {
-        if (checkCooldown(player, "void_push", 50)) return;
+        if (checkCooldown(player, "void_push", 20)) return;
 
         Location center = player.getLocation();
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 10, 10, 10);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
-            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(1.5);
+            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(2.5);
             entity.setVelocity(push);
         }
         player.getWorld().playSound(center, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.5f);
@@ -166,13 +166,13 @@ public class MaceListener implements Listener {
     }
 
     private void handleVoidPull(Player player) {
-        if (checkCooldown(player, "void_pull", 60)) return;
+        if (checkCooldown(player, "void_pull", 20)) return;
 
         Location center = player.getLocation();
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 10, 10, 10);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
-            Vector pull = center.toVector().subtract(entity.getLocation().toVector()).normalize().multiply(1.0);
+            Vector pull = center.toVector().subtract(entity.getLocation().toVector()).normalize().multiply(1.5);
             entity.setVelocity(pull);
         }
         player.getWorld().playSound(center, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 0.5f);
@@ -180,14 +180,14 @@ public class MaceListener implements Listener {
     }
 
     private void handleFrostFreeze(Player player) {
-        if (checkCooldown(player, "frost_freeze", 60)) return;
+        if (checkCooldown(player, "frost_freeze", 20)) return;
 
         Location center = player.getLocation();
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 10, 10, 10);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
             if (entity instanceof LivingEntity living) {
-                living.setFreezeTicks(200); // 10 seconds of freeze
+                living.setFreezeTicks(300); // 15 seconds of freeze
                 living.getWorld().spawnParticle(Particle.SNOWFLAKE, living.getLocation(), 20, 0.5, 1, 0.5, 0.05);
             }
         }
@@ -195,26 +195,26 @@ public class MaceListener implements Listener {
     }
 
     private void handleFrostThrow(Player player, ItemStack maceItem) {
-        if (checkCooldown(player, "frost_throw", 40)) return;
+        if (checkCooldown(player, "frost_throw", 20)) return;
 
         Snowball snowball = player.launchProjectile(Snowball.class);
         snowball.setItem(maceItem); // Disguise as mace
         snowball.getPersistentDataContainer().set(snowballKey, PersistentDataType.BYTE, (byte) 1);
-        snowball.setVelocity(player.getLocation().getDirection().multiply(2.0));
+        snowball.setVelocity(player.getLocation().getDirection().multiply(2.5));
         
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1.0f, 0.5f);
     }
 
     private void handleExplosiveDetonate(Player player) {
-        if (checkCooldown(player, "explosive_detonate", 60)) return;
+        if (checkCooldown(player, "explosive_detonate", 20)) return;
 
         Location center = player.getLocation();
-        center.getWorld().createExplosion(center, 3.0F, false, false);
+        center.getWorld().createExplosion(center, 5.0F, false, false);
         
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 8, 8, 8);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
-            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(2.0);
+            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(3.0);
             entity.setVelocity(push);
         }
     }
