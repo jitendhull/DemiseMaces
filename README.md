@@ -1,3 +1,5 @@
+Automatic Deployment -> ![Build](https://github.com/jitendhull/DemiseMaces/actions/workflows/build.yml/badge.svg)
+
 # ⚔️ DemiseMaces
 
 **DemiseMaces** is a modern Minecraft Paper plugin (1.21+) that introduces four powerful, custom-coded Maces into your server. Each mace possesses unique, devastating abilities to dominate the battlefield!
