@@ -29,11 +29,13 @@ import java.util.Collection;
 
 public class MaceListener implements Listener {
 
+    private final JavaPlugin plugin;
     private final ItemManager itemManager;
     private final CooldownManager cooldownManager;
     private final NamespacedKey snowballKey;
 
     public MaceListener(JavaPlugin plugin, ItemManager itemManager, CooldownManager cooldownManager) {
+        this.plugin = plugin;
         this.itemManager = itemManager;
         this.cooldownManager = cooldownManager;
         this.snowballKey = new NamespacedKey(plugin, "frost_mace_throw");
@@ -115,7 +117,8 @@ public class MaceListener implements Listener {
             loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.5f);
             
             // Add some extra damage or just the effect
-            event.setDamage(event.getDamage() + 5.0);
+            double bonusDamage = plugin.getConfig().getDouble("maces.explosive.passive.bonus_damage", 5.0);
+            event.setDamage(event.getDamage() + bonusDamage);
         }
     }
 
@@ -124,7 +127,8 @@ public class MaceListener implements Listener {
         if (event.getEntity() instanceof Snowball snowball) {
             if (snowball.getPersistentDataContainer().has(snowballKey, PersistentDataType.BYTE)) {
                 if (event.getHitEntity() instanceof LivingEntity target) {
-                    target.damage(20.0, snowball.getShooter() instanceof Entity ? (Entity) snowball.getShooter() : null);
+                    double damage = plugin.getConfig().getDouble("maces.frost.throw.damage", 20.0);
+                    target.damage(damage, snowball.getShooter() instanceof Entity ? (Entity) snowball.getShooter() : null);
                     target.getWorld().playSound(target.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.0f, 0.5f);
                     target.getWorld().spawnParticle(Particle.SNOWFLAKE, target.getLocation(), 20, 0.5, 0.5, 0.5, 0.1);
                 }
@@ -135,30 +139,38 @@ public class MaceListener implements Listener {
     // --- Abilities Implementation ---
 
     private void handleWindDash(Player player) {
-        if (checkCooldown(player, "wind_dash", 20)) return;
+        int cooldown = plugin.getConfig().getInt("maces.wind.dash.cooldown", 20);
+        if (checkCooldown(player, "wind_dash", cooldown)) return;
         
-        Vector direction = player.getLocation().getDirection().normalize().multiply(2.5);
+        double velocity = plugin.getConfig().getDouble("maces.wind.dash.velocity", 2.5);
+        Vector direction = player.getLocation().getDirection().normalize().multiply(velocity);
         player.setVelocity(direction);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 1.5f);
         player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 20, 0.5, 0.5, 0.5, 0.1);
     }
 
     private void handleWindLaunch(Player player) {
-        if (checkCooldown(player, "wind_launch", 20)) return;
+        int cooldown = plugin.getConfig().getInt("maces.wind.launch.cooldown", 20);
+        if (checkCooldown(player, "wind_launch", cooldown)) return;
 
-        player.setVelocity(new Vector(0, 2.5, 0));
+        double velocity = plugin.getConfig().getDouble("maces.wind.launch.velocity", 2.5);
+        player.setVelocity(new Vector(0, velocity, 0));
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WIND_CHARGE_WIND_BURST, 1.0f, 1.0f);
         player.getWorld().spawnParticle(Particle.GUST, player.getLocation(), 5, 0.5, 0.5, 0.5, 0.0);
     }
 
     private void handleVoidPush(Player player) {
-        if (checkCooldown(player, "void_push", 20)) return;
+        int cooldown = plugin.getConfig().getInt("maces.void.push.cooldown", 20);
+        if (checkCooldown(player, "void_push", cooldown)) return;
+
+        double radius = plugin.getConfig().getDouble("maces.void.push.radius", 15.0);
+        double velocity = plugin.getConfig().getDouble("maces.void.push.velocity", 2.5);
 
         Location center = player.getLocation();
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, radius, radius, radius);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
-            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(2.5);
+            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(velocity);
             entity.setVelocity(push);
         }
         player.getWorld().playSound(center, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.5f);
@@ -166,13 +178,17 @@ public class MaceListener implements Listener {
     }
 
     private void handleVoidPull(Player player) {
-        if (checkCooldown(player, "void_pull", 20)) return;
+        int cooldown = plugin.getConfig().getInt("maces.void.pull.cooldown", 20);
+        if (checkCooldown(player, "void_pull", cooldown)) return;
+
+        double radius = plugin.getConfig().getDouble("maces.void.pull.radius", 15.0);
+        double velocity = plugin.getConfig().getDouble("maces.void.pull.velocity", 1.5);
 
         Location center = player.getLocation();
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, radius, radius, radius);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
-            Vector pull = center.toVector().subtract(entity.getLocation().toVector()).normalize().multiply(1.5);
+            Vector pull = center.toVector().subtract(entity.getLocation().toVector()).normalize().multiply(velocity);
             entity.setVelocity(pull);
         }
         player.getWorld().playSound(center, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 0.5f);
@@ -180,14 +196,18 @@ public class MaceListener implements Listener {
     }
 
     private void handleFrostFreeze(Player player) {
-        if (checkCooldown(player, "frost_freeze", 20)) return;
+        int cooldown = plugin.getConfig().getInt("maces.frost.freeze.cooldown", 20);
+        if (checkCooldown(player, "frost_freeze", cooldown)) return;
+
+        double radius = plugin.getConfig().getDouble("maces.frost.freeze.radius", 15.0);
+        int durationTicks = plugin.getConfig().getInt("maces.frost.freeze.duration_ticks", 300);
 
         Location center = player.getLocation();
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, radius, radius, radius);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
             if (entity instanceof LivingEntity living) {
-                living.setFreezeTicks(300); // 15 seconds of freeze
+                living.setFreezeTicks(durationTicks);
                 living.getWorld().spawnParticle(Particle.SNOWFLAKE, living.getLocation(), 20, 0.5, 1, 0.5, 0.05);
             }
         }
@@ -195,26 +215,34 @@ public class MaceListener implements Listener {
     }
 
     private void handleFrostThrow(Player player, ItemStack maceItem) {
-        if (checkCooldown(player, "frost_throw", 20)) return;
+        int cooldown = plugin.getConfig().getInt("maces.frost.throw.cooldown", 20);
+        if (checkCooldown(player, "frost_throw", cooldown)) return;
+
+        double velocity = plugin.getConfig().getDouble("maces.frost.throw.velocity", 2.5);
 
         Snowball snowball = player.launchProjectile(Snowball.class);
         snowball.setItem(maceItem); // Disguise as mace
         snowball.getPersistentDataContainer().set(snowballKey, PersistentDataType.BYTE, (byte) 1);
-        snowball.setVelocity(player.getLocation().getDirection().multiply(2.5));
+        snowball.setVelocity(player.getLocation().getDirection().multiply(velocity));
         
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1.0f, 0.5f);
     }
 
     private void handleExplosiveDetonate(Player player) {
-        if (checkCooldown(player, "explosive_detonate", 20)) return;
+        int cooldown = plugin.getConfig().getInt("maces.explosive.detonate.cooldown", 20);
+        if (checkCooldown(player, "explosive_detonate", cooldown)) return;
+
+        float explosionSize = (float) plugin.getConfig().getDouble("maces.explosive.detonate.explosion_size", 5.0);
+        double radius = plugin.getConfig().getDouble("maces.explosive.detonate.radius", 15.0);
+        double pushVelocity = plugin.getConfig().getDouble("maces.explosive.detonate.push_velocity", 3.0);
 
         Location center = player.getLocation();
-        center.getWorld().createExplosion(center, 5.0F, false, false);
+        center.getWorld().createExplosion(center, explosionSize, false, false);
         
-        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, 15, 15, 15);
+        Collection<Entity> nearby = center.getWorld().getNearbyEntities(center, radius, radius, radius);
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
-            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(3.0);
+            Vector push = entity.getLocation().toVector().subtract(center.toVector()).normalize().multiply(pushVelocity);
             entity.setVelocity(push);
         }
     }

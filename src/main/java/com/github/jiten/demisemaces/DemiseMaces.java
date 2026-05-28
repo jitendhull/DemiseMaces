@@ -13,6 +13,9 @@ public final class DemiseMaces extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Save default config.yml if it doesn't exist
+        saveDefaultConfig();
+
         // Initialize managers
         itemManager = new ItemManager(this);
         cooldownManager = new CooldownManager();
@@ -21,7 +24,7 @@ public final class DemiseMaces extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MaceListener(this, itemManager, cooldownManager), this);
 
         // Register commands
-        DemiseCommand command = new DemiseCommand(itemManager);
+        DemiseCommand command = new DemiseCommand(this, itemManager);
         getServer().getCommandMap().register("demisemaces", command);
 
         printBanner();

@@ -1,0 +1,39 @@
+# DemiseMaces Configuration File
+# Here you can tune all the powers, cooldowns, and attributes of the maces.
+# Cooldowns are in seconds.
+# Radii, velocities, and damage are usually decimals (e.g., 2.5).
+
+maces:
+  wind:
+    dash:
+      cooldown: 20
+      velocity: 2.5
+    launch:
+      cooldown: 20
+      velocity: 2.5
+  void:
+    push:
+      cooldown: 20
+      radius: 15.0
+      velocity: 2.5
+    pull:
+      cooldown: 20
+      radius: 15.0
+      velocity: 1.5
+  frost:
+    freeze:
+      cooldown: 20
+      radius: 15.0
+      duration_ticks: 300 # 20 ticks = 1 second
+    throw:
+      cooldown: 20
+      damage: 20.0
+      velocity: 2.5
+  explosive:
+    passive:
+      bonus_damage: 5.0
+    detonate:
+      cooldown: 20
+      radius: 15.0
+      explosion_size: 5.0
+      push_velocity: 3.0
